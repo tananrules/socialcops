@@ -17,21 +17,43 @@ function csvJSON(csv){
 }
 
 export default Ember.Controller.extend({
+
   actions: {
     uploadCSV(file) {
       let result = csvJSON(file);
       this.set('dataArray', JSON.parse(result));
+      let data = this.get('dataArray');
+      data.forEach((singleData, index) => {
+        singleData.id = index+1;
+        if (isNaN(parseInt(singleData.batting_score))) {
+          singleData.batting_score = '0';
+        }
+        this.store.createRecord('sachin', singleData);
+      });
     },
 
     getTotalRuns() {
-      let data = this.get('dataArray');
       let total = 0;
-      data.forEach((singleData) => {
-        if (!isNaN(parseInt(singleData.batting_score))) {
-          total = total+parseInt(singleData.batting_score);
-        };
+      this.store.peekAll('sachin').forEach((singleRecord) => {
+        total = total + parseInt(singleRecord.get('batting_score'));
       });
       this.set('totalRuns', total)
+    },
+
+    getCountryViseRuns() {
+      let countries = Ember.A();
+      this.store.peekAll('sachin').forEach((singleRecord) => {
+        if(countries.findBy('name', singleRecord.get('opposition'))) {
+          let country = countries.findBy('name', singleRecord.get('opposition'));
+          country.set('runs', parseInt(country.runs) + parseInt(singleRecord.get('batting_score')));
+        } else {
+          countries.push(Ember.Object.create({
+            name: singleRecord.get('opposition'),
+            runs: parseInt(singleRecord.get('batting_score'))
+          }));
+        }
+      });
+      this.set('countries', countries);
     }
   }
 });
