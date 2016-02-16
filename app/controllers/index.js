@@ -19,9 +19,29 @@ function csvJSON(csv){
 function getTotalRuns(store) {
   let total = 0;
   store.peekAll('sachin').forEach((singleRecord) => {
-    total = total + parseInt(singleRecord.get('batting_score'));
+    if (isNaN(parseInt(singleRecord.get('batting_score'))) !== true) {
+      total = total + parseInt(singleRecord.get('batting_score'));
+    }
   });
   return total;
+}
+
+function getCountryWiseRuns(store) {
+  let countries = Ember.A();
+  store.peekAll('sachin').forEach((singleRecord) => {
+    if (isNaN(parseInt(singleRecord.get('batting_score'))) !== true) {
+      if(countries.findBy('label', singleRecord.get('opposition'))) {
+        let country = countries.findBy('label', singleRecord.get('opposition'));
+        country.set('value', parseInt(country.value) + parseInt(singleRecord.get('batting_score')));
+      } else {
+        countries.push(Ember.Object.create({
+          label: singleRecord.get('opposition'),
+          value: parseInt(singleRecord.get('batting_score'))
+        }));
+      }
+    }
+  });
+  return countries;
 }
 
 export default Ember.Controller.extend({
@@ -34,34 +54,22 @@ export default Ember.Controller.extend({
       let result = csvJSON(file);
       this.set('dataArray', JSON.parse(result));
       let data = this.get('dataArray');
-      data.forEach((singleData, index) => {
-        singleData.id = index+1;
-        if (isNaN(parseInt(singleData.batting_score))) {
-          singleData.batting_score = '0';
-        }
-        this.store.createRecord('sachin', singleData);
+      data.forEach((singleRecord, index) => {
+        singleRecord.id = index+1;
+        this.store.createRecord('sachin', singleRecord);
       });
+    },
 
+    showData() {
       let totalRuns = getTotalRuns(this.store);
       this.set('totalRuns', totalRuns);
+
+      let countryWiseRuns = getCountryWiseRuns(this.store);
+      this.set('countries', countryWiseRuns);
     },
 
     
 
-    getCountryViseRuns() {
-      let countries = Ember.A();
-      this.store.peekAll('sachin').forEach((singleRecord) => {
-        if(countries.findBy('label', singleRecord.get('opposition'))) {
-          let country = countries.findBy('label', singleRecord.get('opposition'));
-          country.set('value', parseInt(country.value) + parseInt(singleRecord.get('batting_score')));
-        } else {
-          countries.push(Ember.Object.create({
-            label: singleRecord.get('opposition'),
-            value: parseInt(singleRecord.get('batting_score'))
-          }));
-        }
-      });
-      this.set('countries', countries);
-    }
+    
   }
 });

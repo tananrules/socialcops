@@ -1,52 +1,26 @@
 <div class="col-md-12">
   <div class="row">
-    <div class="col-md-2 border-right">
+    <div class="col-md-2">
       {{file-input fileChanged='uploadCSV'}}
       <br/><br/>
 
-      <button class="btn btn-primary">
+      <button class="btn btn-primary" {{action 'showData' on='click'}}>
         Get Statistics
       </button>
 
       <br/><br/>
-      {{#if fileUploaded}}
+      {{#if totalRuns}}
         <button class="btn btn-primary" type="button">
           Total Runs <span class="badge">{{totalRuns}}</span>
         </button>
       {{/if}}
     </div>
 
-    <div class="col-md-8">
-      
+    <div class="col-md-10 border-left">
+      {{vertical-bar-chart data=countries}}
     </div>
     
   </div>
 </div>
 
-
-
-{{!-- <div class="row">
-  <div class="col-md-6">
-    {{vertical-bar-chart
-      data=countries
-    }}
-  </div>
-
-  <div class="col-md-6">
-    
-  </div>
-
-  <div class="col-md-6">
-    <button class="btn btn-primary" {{action 'getTotalRuns'}}>GET Total Runs</button>
-    {{totalRuns}}
-  </div>
-
-  <div class="col-md-6">
-    <button class="btn btn-primary" {{action 'getCountryViseRuns'}}>GET Country Vise Runs</button><br/>
-    {{#each countries as |country|}}
-      {{country.label}} {{country.value}}<br/>
-    {{/each}}
-  </div>
-</div>
- --}}
 {{outlet}}
