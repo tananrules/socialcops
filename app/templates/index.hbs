@@ -1,6 +1,39 @@
-<div class="row">
+<div class="col-md-12">
+  <div class="row">
+    <div class="col-md-2 border-right">
+      {{file-input fileChanged='uploadCSV'}}
+      <br/><br/>
+
+      <button class="btn btn-primary">
+        Get Statistics
+      </button>
+
+      <br/><br/>
+      {{#if fileUploaded}}
+        <button class="btn btn-primary" type="button">
+          Total Runs <span class="badge">{{totalRuns}}</span>
+        </button>
+      {{/if}}
+    </div>
+
+    <div class="col-md-8">
+      
+    </div>
+    
+  </div>
+</div>
+
+
+
+{{!-- <div class="row">
   <div class="col-md-6">
-    {{file-input fileChanged='uploadCSV'}}
+    {{vertical-bar-chart
+      data=countries
+    }}
+  </div>
+
+  <div class="col-md-6">
+    
   </div>
 
   <div class="col-md-6">
@@ -11,9 +44,9 @@
   <div class="col-md-6">
     <button class="btn btn-primary" {{action 'getCountryViseRuns'}}>GET Country Vise Runs</button><br/>
     {{#each countries as |country|}}
-      {{country.name}} {{country.runs}}<br/>
+      {{country.label}} {{country.value}}<br/>
     {{/each}}
   </div>
 </div>
-
+ --}}
 {{outlet}}

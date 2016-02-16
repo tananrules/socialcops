@@ -1,13 +1,13 @@
 import Ember from 'ember';
 
 function csvJSON(csv){
-  let lines=csv.split("\n");
+  let lines = csv.split("\n");
   let result = [];
-  let headers=lines[0].split(",");
-  for(let i=1;i<lines.length;i++){
+  let headers = lines[0].split(",");
+  for(let i = 1; i < lines.length - 1; i++){
     let obj = {};
-    let currentline=lines[i].split(",");
-    for(let j=0;j<headers.length;j++){
+    let currentline = lines[i].split(",");
+    for(let j = 0; j < headers.length; j++){
       obj[headers[j]] = currentline[j];
     }
     result.push(obj);
@@ -16,10 +16,21 @@ function csvJSON(csv){
   return JSON.stringify(result);
 }
 
+function getTotalRuns(store) {
+  let total = 0;
+  store.peekAll('sachin').forEach((singleRecord) => {
+    total = total + parseInt(singleRecord.get('batting_score'));
+  });
+  return total;
+}
+
 export default Ember.Controller.extend({
+  fileUploaded: false,
 
   actions: {
     uploadCSV(file) {
+      this.toggleProperty('fileUploaded');
+
       let result = csvJSON(file);
       this.set('dataArray', JSON.parse(result));
       let data = this.get('dataArray');
@@ -30,26 +41,23 @@ export default Ember.Controller.extend({
         }
         this.store.createRecord('sachin', singleData);
       });
+
+      let totalRuns = getTotalRuns(this.store);
+      this.set('totalRuns', totalRuns);
     },
 
-    getTotalRuns() {
-      let total = 0;
-      this.store.peekAll('sachin').forEach((singleRecord) => {
-        total = total + parseInt(singleRecord.get('batting_score'));
-      });
-      this.set('totalRuns', total)
-    },
+    
 
     getCountryViseRuns() {
       let countries = Ember.A();
       this.store.peekAll('sachin').forEach((singleRecord) => {
-        if(countries.findBy('name', singleRecord.get('opposition'))) {
-          let country = countries.findBy('name', singleRecord.get('opposition'));
-          country.set('runs', parseInt(country.runs) + parseInt(singleRecord.get('batting_score')));
+        if(countries.findBy('label', singleRecord.get('opposition'))) {
+          let country = countries.findBy('label', singleRecord.get('opposition'));
+          country.set('value', parseInt(country.value) + parseInt(singleRecord.get('batting_score')));
         } else {
           countries.push(Ember.Object.create({
-            name: singleRecord.get('opposition'),
-            runs: parseInt(singleRecord.get('batting_score'))
+            label: singleRecord.get('opposition'),
+            value: parseInt(singleRecord.get('batting_score'))
           }));
         }
       });

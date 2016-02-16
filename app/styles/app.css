@@ -1,3 +1,8 @@
-.col-md-6 {
-  margin: 10px;
+body {
+  margin: 20px;
+}
+
+.border-right {
+  border-right: 1px solid #C9C9C9;
+  height: 100px;
 }
