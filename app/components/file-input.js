@@ -17,7 +17,8 @@ import Ember from 'ember';
  
     fileReader.onload = function(e) {
       let uploadedFile = e.srcElement.result;
-      self.sendAction('fileChanged', uploadedFile);
+      let fileName = inputFile.name;
+      self.sendAction('fileChanged', uploadedFile, fileName);
     };
  
     let firstFile = e.target.files[0];

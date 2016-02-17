@@ -4,20 +4,43 @@
       {{file-input fileChanged='uploadCSV'}}
       <br/><br/>
 
+      {{#if fileUploaded}}
       <button class="btn btn-primary" {{action 'showData' on='click'}}>
         Get Statistics
       </button>
-
-      <br/><br/>
-      {{#if totalRuns}}
-        <button class="btn btn-primary" type="button">
-          Total Runs <span class="badge">{{totalRuns}}</span>
-        </button>
       {{/if}}
     </div>
 
     <div class="col-md-10 border-left">
-      {{vertical-bar-chart data=countries}}
+      <div class="row">
+
+      {{#if countries}}
+        <div class="col-md-12">
+          <p class="text-center"> Country Wise Runs Scored</p>
+          {{vertical-bar-chart data=countries}}
+        </div>
+      {{/if}}
+
+      {{#if matchResult}}
+        <div class="col-md-6">
+          <p class="text-center"> Match Result</p>
+          {{pie-chart data=matchResult}}
+        </div>
+      {{/if}}
+      {{#if tossResult}}
+        <div class="col-md-6">
+          <p class="text-center"> Toss Result</p>
+          {{pie-chart data=tossResult}}
+        </div>
+      {{/if}}
+
+      {{#if yearWiseRuns}}
+        <div class="col-md-12">
+          <p class="text-center"> Year Wise Runs Scored</p>
+          {{ember-chart type='Line' data=yearWiseRuns width=1000 height=400}}
+        </div>
+      {{/if}}
+      </div>
     </div>
     
   </div>

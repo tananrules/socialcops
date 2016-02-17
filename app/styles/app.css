@@ -5,3 +5,7 @@ body {
 .border-left {
   border-left: 1px solid #C9C9C9;
 }
+
+.chart-pie {
+  height: 350px;
+}
